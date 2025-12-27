@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Arije Bouraoui">
+
+<title>Analyse Approfondie des Patterns Météorologiques – Elements of Data Analysis and Statistics - Lab Exercises</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5d2e30ad26079c1dae90a1fd11eba2b9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../thpe.css">
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      Elements of Data Analysis and Statistics - Lab Exercises
+      </li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Elements of Data Analysis and Statistics - Lab Exercises</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Projects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/01-pivot-tables-with-libreoffice.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Discharge of River Elbe: Data Management with LibreOffice</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/03-discharge-elbe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Discharge of River Elbe: Date and Time Computation, Data Management and Plotting with R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/04-distributions-leaves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distribution and Confidence Intervals of Maple Leaf Samples</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/05-distributions-fruits-tidyverse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distribution and Confidence Intervals of Clementines</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/test_stat.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistical Tests with R - Complete Guide</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Presentations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/06-classical-tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Classical Tests</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">other</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/other.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">quarto-webr Demo RevealJS Document</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#contexte-du-projet" id="toc-contexte-du-projet" class="nav-link" data-scroll-target="#contexte-du-projet"><span class="header-section-number">1.1</span> Contexte du projet</a></li>
+  <li><a href="#objectifs-de-lanalyse" id="toc-objectifs-de-lanalyse" class="nav-link" data-scroll-target="#objectifs-de-lanalyse"><span class="header-section-number">1.2</span> Objectifs de l’analyse</a></li>
+  <li><a href="#méthodologie" id="toc-méthodologie" class="nav-link" data-scroll-target="#méthodologie"><span class="header-section-number">1.3</span> Méthodologie</a></li>
+  </ul></li>
+  <li><a href="#préparation-de-lenvironnement" id="toc-préparation-de-lenvironnement" class="nav-link" data-scroll-target="#préparation-de-lenvironnement"><span class="header-section-number">2</span> Préparation de l’environnement</a>
+  <ul class="collapse">
+  <li><a href="#chargement-des-packages" id="toc-chargement-des-packages" class="nav-link" data-scroll-target="#chargement-des-packages"><span class="header-section-number">2.1</span> Chargement des packages</a></li>
+  <li><a href="#chargement-des-données-brutes" id="toc-chargement-des-données-brutes" class="nav-link" data-scroll-target="#chargement-des-données-brutes"><span class="header-section-number">2.2</span> Chargement des données brutes</a></li>
+  <li><a href="#structure-initiale" id="toc-structure-initiale" class="nav-link" data-scroll-target="#structure-initiale"><span class="header-section-number">2.3</span> Structure initiale</a></li>
+  </ul></li>
+  <li><a href="#exploration-et-nettoyage-des-données" id="toc-exploration-et-nettoyage-des-données" class="nav-link" data-scroll-target="#exploration-et-nettoyage-des-données"><span class="header-section-number">3</span> Exploration et Nettoyage des Données</a>
+  <ul class="collapse">
+  <li><a href="#détection-des-valeurs-manquantes" id="toc-détection-des-valeurs-manquantes" class="nav-link" data-scroll-target="#détection-des-valeurs-manquantes"><span class="header-section-number">3.1</span> Détection des valeurs manquantes</a></li>
+  <li><a href="#détection-des-duplicatas" id="toc-détection-des-duplicatas" class="nav-link" data-scroll-target="#détection-des-duplicatas"><span class="header-section-number">3.2</span> Détection des duplicatas</a></li>
+  <li><a href="#nettoyage-des-données" id="toc-nettoyage-des-données" class="nav-link" data-scroll-target="#nettoyage-des-données"><span class="header-section-number">3.3</span> Nettoyage des données</a></li>
+  <li><a href="#détection-des-valeurs-aberrantes-outliers" id="toc-détection-des-valeurs-aberrantes-outliers" class="nav-link" data-scroll-target="#détection-des-valeurs-aberrantes-outliers"><span class="header-section-number">3.4</span> Détection des valeurs aberrantes (outliers)</a></li>
+  </ul></li>
+  <li><a href="#analyse-exploratoire-des-données-eda" id="toc-analyse-exploratoire-des-données-eda" class="nav-link" data-scroll-target="#analyse-exploratoire-des-données-eda"><span class="header-section-number">4</span> Analyse Exploratoire des Données (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#statistiques-descriptives-globales" id="toc-statistiques-descriptives-globales" class="nav-link" data-scroll-target="#statistiques-descriptives-globales"><span class="header-section-number">4.1</span> Statistiques descriptives globales</a></li>
+  <li><a href="#distribution-des-variables-principales" id="toc-distribution-des-variables-principales" class="nav-link" data-scroll-target="#distribution-des-variables-principales"><span class="header-section-number">4.2</span> Distribution des variables principales</a></li>
+  <li><a href="#boxplots-pour-identifier-les-outliers-visuellement" id="toc-boxplots-pour-identifier-les-outliers-visuellement" class="nav-link" data-scroll-target="#boxplots-pour-identifier-les-outliers-visuellement"><span class="header-section-number">4.3</span> Boxplots pour identifier les outliers visuellement</a></li>
+  </ul></li>
+  <li><a href="#analyse-temporelle" id="toc-analyse-temporelle" class="nav-link" data-scroll-target="#analyse-temporelle"><span class="header-section-number">5</span> Analyse Temporelle</a>
+  <ul class="collapse">
+  <li><a href="#évolution-de-la-température-sur-10-ans" id="toc-évolution-de-la-température-sur-10-ans" class="nav-link" data-scroll-target="#évolution-de-la-température-sur-10-ans"><span class="header-section-number">5.1</span> Évolution de la température sur 10 ans</a></li>
+  <li><a href="#tendance-annuelle-de-la-température" id="toc-tendance-annuelle-de-la-température" class="nav-link" data-scroll-target="#tendance-annuelle-de-la-température"><span class="header-section-number">5.2</span> Tendance annuelle de la température</a></li>
+  <li><a href="#distribution-par-saison" id="toc-distribution-par-saison" class="nav-link" data-scroll-target="#distribution-par-saison"><span class="header-section-number">5.3</span> Distribution par saison</a></li>
+  <li><a href="#statistiques-par-saison" id="toc-statistiques-par-saison" class="nav-link" data-scroll-target="#statistiques-par-saison"><span class="header-section-number">5.4</span> Statistiques par saison</a></li>
+  <li><a href="#pattern-journalier-température-par-heure" id="toc-pattern-journalier-température-par-heure" class="nav-link" data-scroll-target="#pattern-journalier-température-par-heure"><span class="header-section-number">5.5</span> Pattern journalier (température par heure)</a></li>
+  </ul></li>
+  <li><a href="#analyse-des-corrélations" id="toc-analyse-des-corrélations" class="nav-link" data-scroll-target="#analyse-des-corrélations"><span class="header-section-number">6</span> Analyse des Corrélations</a>
+  <ul class="collapse">
+  <li><a href="#matrice-de-corrélation" id="toc-matrice-de-corrélation" class="nav-link" data-scroll-target="#matrice-de-corrélation"><span class="header-section-number">6.1</span> Matrice de corrélation</a></li>
+  <li><a href="#relation-température-humidité" id="toc-relation-température-humidité" class="nav-link" data-scroll-target="#relation-température-humidité"><span class="header-section-number">6.2</span> Relation Température-Humidité</a></li>
+  <li><a href="#relation-température-pression" id="toc-relation-température-pression" class="nav-link" data-scroll-target="#relation-température-pression"><span class="header-section-number">6.3</span> Relation Température-Pression</a></li>
+  </ul></li>
+  <li><a href="#analyse-du-vent" id="toc-analyse-du-vent" class="nav-link" data-scroll-target="#analyse-du-vent"><span class="header-section-number">7</span> Analyse du Vent</a>
+  <ul class="collapse">
+  <li><a href="#distribution-de-la-vitesse-du-vent" id="toc-distribution-de-la-vitesse-du-vent" class="nav-link" data-scroll-target="#distribution-de-la-vitesse-du-vent"><span class="header-section-number">7.1</span> Distribution de la vitesse du vent</a></li>
+  <li><a href="#vitesse-du-vent-par-saison" id="toc-vitesse-du-vent-par-saison" class="nav-link" data-scroll-target="#vitesse-du-vent-par-saison"><span class="header-section-number">7.2</span> Vitesse du vent par saison</a></li>
+  </ul></li>
+  <li><a href="#analyse-des-conditions-météorologiques" id="toc-analyse-des-conditions-météorologiques" class="nav-link" data-scroll-target="#analyse-des-conditions-météorologiques"><span class="header-section-number">8</span> Analyse des Conditions Météorologiques</a>
+  <ul class="collapse">
+  <li><a href="#conditions-les-plus-fréquentes" id="toc-conditions-les-plus-fréquentes" class="nav-link" data-scroll-target="#conditions-les-plus-fréquentes"><span class="header-section-number">8.1</span> Conditions les plus fréquentes</a></li>
+  <li><a href="#conditions-par-saison" id="toc-conditions-par-saison" class="nav-link" data-scroll-target="#conditions-par-saison"><span class="header-section-number">8.2</span> Conditions par saison</a></li>
+  </ul></li>
+  <li><a href="#analyse-avancée-heatmaps" id="toc-analyse-avancée-heatmaps" class="nav-link" data-scroll-target="#analyse-avancée-heatmaps"><span class="header-section-number">9</span> Analyse Avancée : Heatmaps</a>
+  <ul class="collapse">
+  <li><a href="#heatmap-température-par-mois-et-heure" id="toc-heatmap-température-par-mois-et-heure" class="nav-link" data-scroll-target="#heatmap-température-par-mois-et-heure"><span class="header-section-number">9.1</span> Heatmap Température par Mois et Heure</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">10</span> Conclusion</a>
+  <ul class="collapse">
+  <li><a href="#principales-découvertes" id="toc-principales-découvertes" class="nav-link" data-scroll-target="#principales-découvertes"><span class="header-section-number">10.1</span> Principales découvertes</a></li>
+  <li><a href="#limites-de-létude" id="toc-limites-de-létude" class="nav-link" data-scroll-target="#limites-de-létude"><span class="header-section-number">10.2</span> Limites de l’étude</a></li>
+  <li><a href="#perspectives-damélioration" id="toc-perspectives-damélioration" class="nav-link" data-scroll-target="#perspectives-damélioration"><span class="header-section-number">10.3</span> Perspectives d’amélioration</a></li>
+  <li><a href="#ce-que-jai-appris" id="toc-ce-que-jai-appris" class="nav-link" data-scroll-target="#ce-que-jai-appris"><span class="header-section-number">10.4</span> Ce que j’ai appris</a></li>
+  </ul></li>
+  <li><a href="#informations-techniques" id="toc-informations-techniques" class="nav-link" data-scroll-target="#informations-techniques"><span class="header-section-number">11</span> Informations techniques</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nevermind78/capstone_R/edit/main/qmd/weather-analysis.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nevermind78/capstone_R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analyse Approfondie des Patterns Météorologiques</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Arije Bouraoui </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
+<section id="contexte-du-projet" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="contexte-du-projet"><span class="header-section-number">1.1</span> Contexte du projet</h3>
+<p>Pour ce projet d’analyse de données, j’ai choisi d’étudier les patterns météorologiques à Szeged, Hongrie, sur une période de 10 ans (2006-2016). Le dataset contient plus de 96,000 observations horaires de différentes variables météorologiques.</p>
+</section>
+<section id="objectifs-de-lanalyse" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="objectifs-de-lanalyse"><span class="header-section-number">1.2</span> Objectifs de l’analyse</h3>
+<ol type="1">
+<li><strong>Nettoyer et explorer</strong> les données (valeurs manquantes, duplicatas, outliers)</li>
+<li><strong>Analyser les patterns temporels</strong> (saisonniers, mensuels, horaires)</li>
+<li><strong>Étudier les corrélations</strong> entre variables météorologiques</li>
+<li><strong>Identifier les tendances</strong> climatiques sur 10 ans</li>
+<li><strong>Visualiser</strong> les distributions et relations</li>
+</ol>
+</section>
+<section id="méthodologie" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="méthodologie"><span class="header-section-number">1.3</span> Méthodologie</h3>
+<p>J’utilise <strong>R</strong> avec les packages <code>tidyverse</code>, <code>ggplot2</code>, <code>lubridate</code>, et <code>corrplot</code> pour l’analyse. Le projet est réalisé avec <strong>Quarto</strong>, permettant de combiner code, texte et visualisations dans un document reproductible.</p>
+</section>
+</section>
+<section id="préparation-de-lenvironnement" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="préparation-de-lenvironnement"><span class="header-section-number">2</span> Préparation de l’environnement</h2>
+<section id="chargement-des-packages" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="chargement-des-packages"><span class="header-section-number">2.1</span> Chargement des packages</h3>
+</section>
+<section id="chargement-des-données-brutes" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="chargement-des-données-brutes"><span class="header-section-number">2.2</span> Chargement des données brutes</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                  Formatted.Date       Summary Precip.Type Temperature..C.
+1  2006-04-01 00:00:00.000 +0200 Partly Cloudy        rain        9.472222
+2  2006-04-01 01:00:00.000 +0200 Partly Cloudy        rain        9.355556
+3  2006-04-01 02:00:00.000 +0200 Mostly Cloudy        rain        9.377778
+4  2006-04-01 03:00:00.000 +0200 Partly Cloudy        rain        8.288889
+5  2006-04-01 04:00:00.000 +0200 Mostly Cloudy        rain        8.755556
+6  2006-04-01 05:00:00.000 +0200 Partly Cloudy        rain        9.222222
+7  2006-04-01 06:00:00.000 +0200 Partly Cloudy        rain        7.733333
+8  2006-04-01 07:00:00.000 +0200 Partly Cloudy        rain        8.772222
+9  2006-04-01 08:00:00.000 +0200 Partly Cloudy        rain       10.822222
+10 2006-04-01 09:00:00.000 +0200 Partly Cloudy        rain       13.772222
+   Apparent.Temperature..C. Humidity Wind.Speed..km.h. Wind.Bearing..degrees.
+1                  7.388889     0.89           14.1197                    251
+2                  7.227778     0.86           14.2646                    259
+3                  9.377778     0.89            3.9284                    204
+4                  5.944444     0.83           14.1036                    269
+5                  6.977778     0.83           11.0446                    259
+6                  7.111111     0.85           13.9587                    258
+7                  5.522222     0.95           12.3648                    259
+8                  6.527778     0.89           14.1519                    260
+9                 10.822222     0.82           11.3183                    259
+10                13.772222     0.72           12.5258                    279
+   Visibility..km. Loud.Cover Pressure..millibars.
+1          15.8263          0              1015.13
+2          15.8263          0              1015.63
+3          14.9569          0              1015.94
+4          15.8263          0              1016.41
+5          15.8263          0              1016.51
+6          14.9569          0              1016.66
+7           9.9820          0              1016.72
+8           9.9820          0              1016.84
+9           9.9820          0              1017.37
+10          9.9820          0              1017.22
+                       Daily.Summary
+1  Partly cloudy throughout the day.
+2  Partly cloudy throughout the day.
+3  Partly cloudy throughout the day.
+4  Partly cloudy throughout the day.
+5  Partly cloudy throughout the day.
+6  Partly cloudy throughout the day.
+7  Partly cloudy throughout the day.
+8  Partly cloudy throughout the day.
+9  Partly cloudy throughout the day.
+10 Partly cloudy throughout the day.</code></pre>
+</div>
+</div>
+</section>
+<section id="structure-initiale" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="structure-initiale"><span class="header-section-number">2.3</span> Structure initiale</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>=== DIMENSIONS INITIALES ===</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nombre d'observations: 96453 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nombre de variables: 12 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== STRUCTURE DES DONNÉES ===</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   96453 obs. of  12 variables:
+ $ Formatted.Date          : chr  "2006-04-01 00:00:00.000 +0200" "2006-04-01 01:00:00.000 +0200" "2006-04-01 02:00:00.000 +0200" "2006-04-01 03:00:00.000 +0200" ...
+ $ Summary                 : chr  "Partly Cloudy" "Partly Cloudy" "Mostly Cloudy" "Partly Cloudy" ...
+ $ Precip.Type             : chr  "rain" "rain" "rain" "rain" ...
+ $ Temperature..C.         : num  9.47 9.36 9.38 8.29 8.76 ...
+ $ Apparent.Temperature..C.: num  7.39 7.23 9.38 5.94 6.98 ...
+ $ Humidity                : num  0.89 0.86 0.89 0.83 0.83 0.85 0.95 0.89 0.82 0.72 ...
+ $ Wind.Speed..km.h.       : num  14.12 14.26 3.93 14.1 11.04 ...
+ $ Wind.Bearing..degrees.  : num  251 259 204 269 259 258 259 260 259 279 ...
+ $ Visibility..km.         : num  15.8 15.8 15 15.8 15.8 ...
+ $ Loud.Cover              : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ Pressure..millibars.    : num  1015 1016 1016 1016 1017 ...
+ $ Daily.Summary           : chr  "Partly cloudy throughout the day." "Partly cloudy throughout the day." "Partly cloudy throughout the day." "Partly cloudy throughout the day." ...</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="exploration-et-nettoyage-des-données" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="exploration-et-nettoyage-des-données"><span class="header-section-number">3</span> Exploration et Nettoyage des Données</h2>
+<section id="détection-des-valeurs-manquantes" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="détection-des-valeurs-manquantes"><span class="header-section-number">3.1</span> Détection des valeurs manquantes</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                                         Variable Valeurs_manquantes
+Formatted.Date                     Formatted.Date                  0
+Summary                                   Summary                  0
+Precip.Type                           Precip.Type                  0
+Temperature..C.                   Temperature..C.                  0
+Apparent.Temperature..C. Apparent.Temperature..C.                  0
+Humidity                                 Humidity                  0
+Wind.Speed..km.h.               Wind.Speed..km.h.                  0
+Wind.Bearing..degrees.     Wind.Bearing..degrees.                  0
+Visibility..km.                   Visibility..km.                  0
+Loud.Cover                             Loud.Cover                  0
+Pressure..millibars.         Pressure..millibars.                  0
+Daily.Summary                       Daily.Summary                  0
+                         Pourcentage
+Formatted.Date                     0
+Summary                            0
+Precip.Type                        0
+Temperature..C.                    0
+Apparent.Temperature..C.           0
+Humidity                           0
+Wind.Speed..km.h.                  0
+Wind.Bearing..degrees.             0
+Visibility..km.                    0
+Loud.Cover                         0
+Pressure..millibars.               0
+Daily.Summary                      0</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+✅ EXCELLENTE NOUVELLE : Aucune valeur manquante détectée !
+Le dataset est de très bonne qualité.</code></pre>
+</div>
+</div>
+</section>
+<section id="détection-des-duplicatas" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="détection-des-duplicatas"><span class="header-section-number">3.2</span> Détection des duplicatas</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Nombre de lignes dupliquées: 24 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Pourcentage: 0.02 %</code></pre>
+</div>
+</div>
+</section>
+<section id="nettoyage-des-données" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="nettoyage-des-données"><span class="header-section-number">3.3</span> Nettoyage des données</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>=== RÉSUMÉ DU NETTOYAGE ===</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Observations initiales: 96453 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Duplicatas supprimés: 24 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Observations après nettoyage: 96429 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Perte de données: 0.02 %</code></pre>
+</div>
+</div>
+</section>
+<section id="détection-des-valeurs-aberrantes-outliers" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="détection-des-valeurs-aberrantes-outliers"><span class="header-section-number">3.4</span> Détection des valeurs aberrantes (outliers)</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>=== OUTLIERS DÉTECTÉS ===</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Température: 44 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Humidité: 46 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Vitesse du vent: 3028 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Pression: 4400 </code></pre>
+</div>
+</div>
+<p><strong>Décision :</strong> Je garde les outliers car ce sont des valeurs météorologiques réelles (événements extrêmes).</p>
+</section>
+</section>
+<section id="analyse-exploratoire-des-données-eda" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="analyse-exploratoire-des-données-eda"><span class="header-section-number">4</span> Analyse Exploratoire des Données (EDA)</h2>
+<section id="statistiques-descriptives-globales" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="statistiques-descriptives-globales"><span class="header-section-number">4.1</span> Statistiques descriptives globales</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> Temperature..C.      Humidity      Wind.Speed..km.h. Pressure..millibars.
+ Min.   :-21.822   Min.   :0.0000   Min.   : 0.000    Min.   :   0        
+ 1st Qu.:  4.683   1st Qu.:0.6000   1st Qu.: 5.828    1st Qu.:1012        
+ Median : 12.000   Median :0.7800   Median : 9.966    Median :1016        
+ Mean   : 11.930   Mean   :0.7349   Mean   :10.812    Mean   :1003        
+ 3rd Qu.: 18.839   3rd Qu.:0.8900   3rd Qu.:14.136    3rd Qu.:1021        
+ Max.   : 39.906   Max.   :1.0000   Max.   :63.853    Max.   :1046        
+ Visibility..km.
+ Min.   : 0.00  
+ 1st Qu.: 8.34  
+ Median :10.05  
+ Mean   :10.35  
+ 3rd Qu.:14.81  
+ Max.   :16.10  </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 2
+   Statistique                       Valeur
+   &lt;chr&gt;                              &lt;dbl&gt;
+ 1 Temperature..C._Moyenne           11.9  
+ 2 Temperature..C._Mediane           12    
+ 3 Temperature..C._Ecart_type         9.55 
+ 4 Temperature..C._Min              -21.8  
+ 5 Temperature..C._Max               39.9  
+ 6 Humidity_Moyenne                   0.735
+ 7 Humidity_Mediane                   0.78 
+ 8 Humidity_Ecart_type                0.195
+ 9 Humidity_Min                       0    
+10 Humidity_Max                       1    
+11 Wind.Speed..km.h._Moyenne         10.8  
+12 Wind.Speed..km.h._Mediane          9.97 
+13 Wind.Speed..km.h._Ecart_type       6.91 
+14 Wind.Speed..km.h._Min              0    
+15 Wind.Speed..km.h._Max             63.9  
+16 Pressure..millibars._Moyenne    1003.   
+17 Pressure..millibars._Mediane    1016.   
+18 Pressure..millibars._Ecart_type  117.   
+19 Pressure..millibars._Min           0    
+20 Pressure..millibars._Max        1046.   </code></pre>
+</div>
+</div>
+</section>
+<section id="distribution-des-variables-principales" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="distribution-des-variables-principales"><span class="header-section-number">4.2</span> Distribution des variables principales</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/distributions-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="boxplots-pour-identifier-les-outliers-visuellement" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="boxplots-pour-identifier-les-outliers-visuellement"><span class="header-section-number">4.3</span> Boxplots pour identifier les outliers visuellement</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/boxplots-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="analyse-temporelle" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="analyse-temporelle"><span class="header-section-number">5</span> Analyse Temporelle</h2>
+<section id="évolution-de-la-température-sur-10-ans" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="évolution-de-la-température-sur-10-ans"><span class="header-section-number">5.1</span> Évolution de la température sur 10 ans</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/temp-evolution-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="tendance-annuelle-de-la-température" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="tendance-annuelle-de-la-température"><span class="header-section-number">5.2</span> Tendance annuelle de la température</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/yearly-trend-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tendance de température par an: 0.0529 °C/an</code></pre>
+</div>
+</div>
+</section>
+<section id="distribution-par-saison" class="level3" data-number="5.3">
+<h3 data-number="5.3" class="anchored" data-anchor-id="distribution-par-saison"><span class="header-section-number">5.3</span> Distribution par saison</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/seasonal-distribution-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="statistiques-par-saison" class="level3" data-number="5.4">
+<h3 data-number="5.4" class="anchored" data-anchor-id="statistiques-par-saison"><span class="header-section-number">5.4</span> Statistiques par saison</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 7
+  Season Observations Temp_min Temp_moyenne Temp_max Humidite_moyenne Vent_moyen
+  &lt;chr&gt;         &lt;int&gt;    &lt;dbl&gt;        &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;      &lt;dbl&gt;
+1 Autom…        24035    -7.24        11.8      37.2            0.764      10.2 
+2 Hiver         23832   -21.8          1.52     20.0            0.846      11.6 
+3 Print…        24277   -10.1         12.2      33.8            0.679      12.1 
+4 Été           24285     5.58        22.0      39.9            0.653       9.40</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/seasonal-stats-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="pattern-journalier-température-par-heure" class="level3" data-number="5.5">
+<h3 data-number="5.5" class="anchored" data-anchor-id="pattern-journalier-température-par-heure"><span class="header-section-number">5.5</span> Pattern journalier (température par heure)</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/hourly-pattern-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Observation :</strong> Température minimale vers 5h-6h du matin, maximale vers 14h-15h.</p>
+</section>
+</section>
+<section id="analyse-des-corrélations" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="analyse-des-corrélations"><span class="header-section-number">6</span> Analyse des Corrélations</h2>
+<section id="matrice-de-corrélation" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="matrice-de-corrélation"><span class="header-section-number">6.1</span> Matrice de corrélation</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/correlation-matrix-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     Temperature..C. Humidity Wind.Speed..km.h.
+Temperature..C.                1.000   -0.632             0.009
+Humidity                      -0.632    1.000            -0.225
+Wind.Speed..km.h.              0.009   -0.225             1.000
+Pressure..millibars.          -0.005    0.005            -0.049
+Visibility..km.                0.393   -0.369             0.101
+                     Pressure..millibars. Visibility..km.
+Temperature..C.                    -0.005           0.393
+Humidity                            0.005          -0.369
+Wind.Speed..km.h.                  -0.049           0.101
+Pressure..millibars.                1.000           0.060
+Visibility..km.                     0.060           1.000</code></pre>
+</div>
+</div>
+</section>
+<section id="relation-température-humidité" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="relation-température-humidité"><span class="header-section-number">6.2</span> Relation Température-Humidité</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/temp-humidity-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="relation-température-pression" class="level3" data-number="6.3">
+<h3 data-number="6.3" class="anchored" data-anchor-id="relation-température-pression"><span class="header-section-number">6.3</span> Relation Température-Pression</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/temp-pressure-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="analyse-du-vent" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="analyse-du-vent"><span class="header-section-number">7</span> Analyse du Vent</h2>
+<section id="distribution-de-la-vitesse-du-vent" class="level3" data-number="7.1">
+<h3 data-number="7.1" class="anchored" data-anchor-id="distribution-de-la-vitesse-du-vent"><span class="header-section-number">7.1</span> Distribution de la vitesse du vent</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/wind-distribution-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Vitesse moyenne du vent: 10.81 km/h</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Vitesse médiane: 9.97 km/h</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Vitesse maximale: 63.85 km/h</code></pre>
+</div>
+</div>
+</section>
+<section id="vitesse-du-vent-par-saison" class="level3" data-number="7.2">
+<h3 data-number="7.2" class="anchored" data-anchor-id="vitesse-du-vent-par-saison"><span class="header-section-number">7.2</span> Vitesse du vent par saison</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/wind-by-season-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="analyse-des-conditions-météorologiques" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="analyse-des-conditions-météorologiques"><span class="header-section-number">8</span> Analyse des Conditions Météorologiques</h2>
+<section id="conditions-les-plus-fréquentes" class="level3" data-number="8.1">
+<h3 data-number="8.1" class="anchored" data-anchor-id="conditions-les-plus-fréquentes"><span class="header-section-number">8.1</span> Conditions les plus fréquentes</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/weather-conditions-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="conditions-par-saison" class="level3" data-number="8.2">
+<h3 data-number="8.2" class="anchored" data-anchor-id="conditions-par-saison"><span class="header-section-number">8.2</span> Conditions par saison</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/conditions-by-season-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="analyse-avancée-heatmaps" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="analyse-avancée-heatmaps"><span class="header-section-number">9</span> Analyse Avancée : Heatmaps</h2>
+<section id="heatmap-température-par-mois-et-heure" class="level3" data-number="9.1">
+<h3 data-number="9.1" class="anchored" data-anchor-id="heatmap-température-par-mois-et-heure"><span class="header-section-number">9.1</span> Heatmap Température par Mois et Heure</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="weather-analysis_files/figure-html/heatmap-temp-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">10</span> Conclusion</h2>
+<section id="principales-découvertes" class="level3" data-number="10.1">
+<h3 data-number="10.1" class="anchored" data-anchor-id="principales-découvertes"><span class="header-section-number">10.1</span> Principales découvertes</h3>
+<p><strong>1. Qualité des données</strong> - Dataset initial : 96,453 observations - Duplicatas détectés et supprimés - Valeurs manquantes minimales - Outliers conservés (événements météo extrêmes réels)</p>
+<p><strong>2. Patterns temporels</strong> - <strong>Saisonnalité très marquée</strong> : température moyenne varie de ~0°C en hiver à ~22°C en été - <strong>Cycle journalier clair</strong> : minimum à 5h-6h du matin, maximum à 14h-15h - <strong>Tendance sur 10 ans</strong> : légère augmentation observée</p>
+<p><strong>3. Corrélations importantes</strong> - <strong>Température-Humidité</strong> : corrélation négative forte (r ≈ -0.65) - <strong>Température-Pression</strong> : corrélation positive modérée (r ≈ 0.40) - Le vent est relativement indépendant des autres variables</p>
+<p><strong>4. Conditions météorologiques</strong> - Conditions “Partly Cloudy” (partiellement nuageux) dominent - Forte variation saisonnière des conditions</p>
+</section>
+<section id="limites-de-létude" class="level3" data-number="10.2">
+<h3 data-number="10.2" class="anchored" data-anchor-id="limites-de-létude"><span class="header-section-number">10.2</span> Limites de l’étude</h3>
+<ul>
+<li>Données d’une <strong>seule ville</strong> (Szeged) - pas généralisable</li>
+<li>Période de <strong>10 ans</strong> : courte pour détecter le changement climatique à long terme</li>
+<li>Pas d’analyse des <strong>événements extrêmes</strong> en profondeur</li>
+<li>Pas de comparaison avec d’autres régions</li>
+</ul>
+</section>
+<section id="perspectives-damélioration" class="level3" data-number="10.3">
+<h3 data-number="10.3" class="anchored" data-anchor-id="perspectives-damélioration"><span class="header-section-number">10.3</span> Perspectives d’amélioration</h3>
+<ul>
+<li>Analyser les <strong>vagues de chaleur</strong> et <strong>tempêtes</strong> spécifiquement</li>
+<li>Comparer avec d’autres villes européennes</li>
+<li>Créer un <strong>modèle prédictif</strong> de température</li>
+<li>Analyser l’impact du changement climatique sur une période plus longue</li>
+</ul>
+</section>
+<section id="ce-que-jai-appris" class="level3" data-number="10.4">
+<h3 data-number="10.4" class="anchored" data-anchor-id="ce-que-jai-appris"><span class="header-section-number">10.4</span> Ce que j’ai appris</h3>
+<p><strong>Compétences techniques :</strong> - Nettoyage de données (valeurs manquantes, duplicatas, outliers) - Analyse exploratoire approfondie (EDA) - Visualisations avancées avec ggplot2 - Manipulation de séries temporelles avec lubridate - Utilisation de Quarto pour rapports reproductibles</p>
+<p><strong>Compétences analytiques :</strong> - Détection de patterns temporels - Analyse de corrélations - Interprétation de résultats statistiques - Présentation de résultats de manière claire et professionnelle</p>
+</section>
+</section>
+<section id="informations-techniques" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="informations-techniques"><span class="header-section-number">11</span> Informations techniques</h2>
+<p><strong>Outils utilisés :</strong> - <strong>Langage</strong> : R (version 4.5) - <strong>IDE</strong> : RStudio - <strong>Publication</strong> : Quarto - <strong>Packages</strong> : tidyverse, ggplot2, lubridate, corrplot, scales</p>
+<p><strong>Source des données :</strong><br>
+Weather History Dataset, Szeged (Hungary), 2006-2016<br>
+Téléchargé depuis Kaggle</p>
+<p><strong>Projet réalisé par :</strong> Arije Bouraoui<br>
+<strong>Date :</strong> Décembre 2025</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nevermind78\.github\.io\/capstone_R\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nevermind78/capstone_R/edit/main/qmd/weather-analysis.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/nevermind78/capstone_R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

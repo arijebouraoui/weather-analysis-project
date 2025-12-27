@@ -1,0 +1,142 @@
+[
+  {
+    "objectID": "qmd/weather-analysis.html",
+    "href": "qmd/weather-analysis.html",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "",
+    "text": "Pour ce projet d’analyse de données, j’ai choisi d’étudier les patterns météorologiques à Szeged, Hongrie, sur une période de 10 ans (2006-2016). Le dataset contient plus de 96,000 observations horaires de différentes variables météorologiques.\n\n\n\n\nNettoyer et explorer les données (valeurs manquantes, duplicatas, outliers)\nAnalyser les patterns temporels (saisonniers, mensuels, horaires)\nÉtudier les corrélations entre variables météorologiques\nIdentifier les tendances climatiques sur 10 ans\nVisualiser les distributions et relations\n\n\n\n\nJ’utilise R avec les packages tidyverse, ggplot2, lubridate, et corrplot pour l’analyse. Le projet est réalisé avec Quarto, permettant de combiner code, texte et visualisations dans un document reproductible."
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#introduction",
+    "href": "qmd/weather-analysis.html#introduction",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "",
+    "text": "Pour ce projet d’analyse de données, j’ai choisi d’étudier les patterns météorologiques à Szeged, Hongrie, sur une période de 10 ans (2006-2016). Le dataset contient plus de 96,000 observations horaires de différentes variables météorologiques.\n\n\n\n\nNettoyer et explorer les données (valeurs manquantes, duplicatas, outliers)\nAnalyser les patterns temporels (saisonniers, mensuels, horaires)\nÉtudier les corrélations entre variables météorologiques\nIdentifier les tendances climatiques sur 10 ans\nVisualiser les distributions et relations\n\n\n\n\nJ’utilise R avec les packages tidyverse, ggplot2, lubridate, et corrplot pour l’analyse. Le projet est réalisé avec Quarto, permettant de combiner code, texte et visualisations dans un document reproductible."
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#préparation",
+    "href": "qmd/weather-analysis.html#préparation",
+    "title": "Analyse des Patterns Météorologiques",
+    "section": "2 Préparation",
+    "text": "2 Préparation\n\n2.1 Chargement des packages\n\n\n2.2 Chargement des données\n\n\n                 Formatted.Date       Summary Precip.Type Temperature..C.\n1 2006-04-01 00:00:00.000 +0200 Partly Cloudy        rain        9.472222\n2 2006-04-01 01:00:00.000 +0200 Partly Cloudy        rain        9.355556\n3 2006-04-01 02:00:00.000 +0200 Mostly Cloudy        rain        9.377778\n4 2006-04-01 03:00:00.000 +0200 Partly Cloudy        rain        8.288889\n5 2006-04-01 04:00:00.000 +0200 Mostly Cloudy        rain        8.755556\n6 2006-04-01 05:00:00.000 +0200 Partly Cloudy        rain        9.222222\n  Apparent.Temperature..C. Humidity Wind.Speed..km.h. Wind.Bearing..degrees.\n1                 7.388889     0.89           14.1197                    251\n2                 7.227778     0.86           14.2646                    259\n3                 9.377778     0.89            3.9284                    204\n4                 5.944444     0.83           14.1036                    269\n5                 6.977778     0.83           11.0446                    259\n6                 7.111111     0.85           13.9587                    258\n  Visibility..km. Loud.Cover Pressure..millibars.\n1         15.8263          0              1015.13\n2         15.8263          0              1015.63\n3         14.9569          0              1015.94\n4         15.8263          0              1016.41\n5         15.8263          0              1016.51\n6         14.9569          0              1016.66\n                      Daily.Summary\n1 Partly cloudy throughout the day.\n2 Partly cloudy throughout the day.\n3 Partly cloudy throughout the day.\n4 Partly cloudy throughout the day.\n5 Partly cloudy throughout the day.\n6 Partly cloudy throughout the day.\n\n\n\n\n2.3 Exploration initiale\n\n\nNombre d'observations: 96453 \n\n\nNombre de variables: 12 \n\n\n'data.frame':   96453 obs. of  12 variables:\n $ Formatted.Date          : chr  \"2006-04-01 00:00:00.000 +0200\" \"2006-04-01 01:00:00.000 +0200\" \"2006-04-01 02:00:00.000 +0200\" \"2006-04-01 03:00:00.000 +0200\" ...\n $ Summary                 : chr  \"Partly Cloudy\" \"Partly Cloudy\" \"Mostly Cloudy\" \"Partly Cloudy\" ...\n $ Precip.Type             : chr  \"rain\" \"rain\" \"rain\" \"rain\" ...\n $ Temperature..C.         : num  9.47 9.36 9.38 8.29 8.76 ...\n $ Apparent.Temperature..C.: num  7.39 7.23 9.38 5.94 6.98 ...\n $ Humidity                : num  0.89 0.86 0.89 0.83 0.83 0.85 0.95 0.89 0.82 0.72 ...\n $ Wind.Speed..km.h.       : num  14.12 14.26 3.93 14.1 11.04 ...\n $ Wind.Bearing..degrees.  : num  251 259 204 269 259 258 259 260 259 279 ...\n $ Visibility..km.         : num  15.8 15.8 15 15.8 15.8 ...\n $ Loud.Cover              : num  0 0 0 0 0 0 0 0 0 0 ...\n $ Pressure..millibars.    : num  1015 1016 1016 1016 1017 ...\n $ Daily.Summary           : chr  \"Partly cloudy throughout the day.\" \"Partly cloudy throughout the day.\" \"Partly cloudy throughout the day.\" \"Partly cloudy throughout the day.\" ..."
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#nettoyage-des-données",
+    "href": "qmd/weather-analysis.html#nettoyage-des-données",
+    "title": "Analyse des Patterns Météorologiques",
+    "section": "3 Nettoyage des données",
+    "text": "3 Nettoyage des données\n\n\n Temperature..C.      Humidity      Wind.Speed..km.h. Pressure..millibars.\n Min.   :-21.822   Min.   :0.0000   Min.   : 0.000    Min.   :   0        \n 1st Qu.:  4.689   1st Qu.:0.6000   1st Qu.: 5.828    1st Qu.:1012        \n Median : 12.000   Median :0.7800   Median : 9.966    Median :1016        \n Mean   : 11.933   Mean   :0.7349   Mean   :10.811    Mean   :1003        \n 3rd Qu.: 18.839   3rd Qu.:0.8900   3rd Qu.:14.136    3rd Qu.:1021        \n Max.   : 39.906   Max.   :1.0000   Max.   :63.853    Max.   :1046"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-1-températures",
+    "href": "qmd/weather-analysis.html#analyse-1-températures",
+    "title": "Analyse des Patterns Météorologiques",
+    "section": "4 Analyse 1 : Températures",
+    "text": "4 Analyse 1 : Températures\n\n4.1 Évolution de la température dans le temps\n\n\n\n\n\n\n\n\n\nObservation : Pattern saisonnier clair avec des pics en été et des creux en hiver.\n\n\n4.2 Distribution des températures par saison"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-2-humidité",
+    "href": "qmd/weather-analysis.html#analyse-2-humidité",
+    "title": "Analyse des Patterns Météorologiques",
+    "section": "5 Analyse 2 : Humidité",
+    "text": "5 Analyse 2 : Humidité\n\n5.1 Relation température-humidité\n\n\n\n\n\n\n\n\n\n\n\nCorrélation température-humidité: -0.632\n\n\nRésultat : Corrélation négative - quand il fait chaud, l’humidité est plus faible."
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-3-vent",
+    "href": "qmd/weather-analysis.html#analyse-3-vent",
+    "title": "Analyse des Patterns Météorologiques",
+    "section": "6 Analyse 3 : Vent",
+    "text": "6 Analyse 3 : Vent\n\n6.1 Distribution de la vitesse du vent"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-4-conditions-météorologiques",
+    "href": "qmd/weather-analysis.html#analyse-4-conditions-météorologiques",
+    "title": "Analyse des Patterns Météorologiques",
+    "section": "7 Analyse 4 : Conditions météorologiques",
+    "text": "7 Analyse 4 : Conditions météorologiques\n\n7.1 Conditions les plus fréquentes"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-5-matrice-de-corrélation",
+    "href": "qmd/weather-analysis.html#analyse-5-matrice-de-corrélation",
+    "title": "Analyse des Patterns Météorologiques",
+    "section": "8 Analyse 5 : Matrice de corrélation",
+    "text": "8 Analyse 5 : Matrice de corrélation"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-6-patterns-horaires",
+    "href": "qmd/weather-analysis.html#analyse-6-patterns-horaires",
+    "title": "Analyse des Patterns Météorologiques",
+    "section": "9 Analyse 6 : Patterns horaires",
+    "text": "9 Analyse 6 : Patterns horaires\n\n9.1 Température par heure"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#conclusion",
+    "href": "qmd/weather-analysis.html#conclusion",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "10 Conclusion",
+    "text": "10 Conclusion\n\n10.1 Principales découvertes\n1. Qualité des données - Dataset initial : 96,453 observations - Duplicatas détectés et supprimés - Valeurs manquantes minimales - Outliers conservés (événements météo extrêmes réels)\n2. Patterns temporels - Saisonnalité très marquée : température moyenne varie de ~0°C en hiver à ~22°C en été - Cycle journalier clair : minimum à 5h-6h du matin, maximum à 14h-15h - Tendance sur 10 ans : légère augmentation observée\n3. Corrélations importantes - Température-Humidité : corrélation négative forte (r ≈ -0.65) - Température-Pression : corrélation positive modérée (r ≈ 0.40) - Le vent est relativement indépendant des autres variables\n4. Conditions météorologiques - Conditions “Partly Cloudy” (partiellement nuageux) dominent - Forte variation saisonnière des conditions\n\n\n10.2 Limites de l’étude\n\nDonnées d’une seule ville (Szeged) - pas généralisable\nPériode de 10 ans : courte pour détecter le changement climatique à long terme\nPas d’analyse des événements extrêmes en profondeur\nPas de comparaison avec d’autres régions\n\n\n\n10.3 Perspectives d’amélioration\n\nAnalyser les vagues de chaleur et tempêtes spécifiquement\nComparer avec d’autres villes européennes\nCréer un modèle prédictif de température\nAnalyser l’impact du changement climatique sur une période plus longue\n\n\n\n10.4 Ce que j’ai appris\nCompétences techniques : - Nettoyage de données (valeurs manquantes, duplicatas, outliers) - Analyse exploratoire approfondie (EDA) - Visualisations avancées avec ggplot2 - Manipulation de séries temporelles avec lubridate - Utilisation de Quarto pour rapports reproductibles\nCompétences analytiques : - Détection de patterns temporels - Analyse de corrélations - Interprétation de résultats statistiques - Présentation de résultats de manière claire et professionnelle"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#informations-techniques",
+    "href": "qmd/weather-analysis.html#informations-techniques",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "11 Informations techniques",
+    "text": "11 Informations techniques\nOutils utilisés : - Langage : R (version 4.5) - IDE : RStudio - Publication : Quarto - Packages : tidyverse, ggplot2, lubridate, corrplot, scales\nSource des données :\nWeather History Dataset, Szeged (Hungary), 2006-2016\nTéléchargé depuis Kaggle\nProjet réalisé par : Arije Bouraoui\nDate : Décembre 2025"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#préparation-de-lenvironnement",
+    "href": "qmd/weather-analysis.html#préparation-de-lenvironnement",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "2 Préparation de l’environnement",
+    "text": "2 Préparation de l’environnement\n\n2.1 Chargement des packages\n\n\n2.2 Chargement des données brutes\n\n\n                  Formatted.Date       Summary Precip.Type Temperature..C.\n1  2006-04-01 00:00:00.000 +0200 Partly Cloudy        rain        9.472222\n2  2006-04-01 01:00:00.000 +0200 Partly Cloudy        rain        9.355556\n3  2006-04-01 02:00:00.000 +0200 Mostly Cloudy        rain        9.377778\n4  2006-04-01 03:00:00.000 +0200 Partly Cloudy        rain        8.288889\n5  2006-04-01 04:00:00.000 +0200 Mostly Cloudy        rain        8.755556\n6  2006-04-01 05:00:00.000 +0200 Partly Cloudy        rain        9.222222\n7  2006-04-01 06:00:00.000 +0200 Partly Cloudy        rain        7.733333\n8  2006-04-01 07:00:00.000 +0200 Partly Cloudy        rain        8.772222\n9  2006-04-01 08:00:00.000 +0200 Partly Cloudy        rain       10.822222\n10 2006-04-01 09:00:00.000 +0200 Partly Cloudy        rain       13.772222\n   Apparent.Temperature..C. Humidity Wind.Speed..km.h. Wind.Bearing..degrees.\n1                  7.388889     0.89           14.1197                    251\n2                  7.227778     0.86           14.2646                    259\n3                  9.377778     0.89            3.9284                    204\n4                  5.944444     0.83           14.1036                    269\n5                  6.977778     0.83           11.0446                    259\n6                  7.111111     0.85           13.9587                    258\n7                  5.522222     0.95           12.3648                    259\n8                  6.527778     0.89           14.1519                    260\n9                 10.822222     0.82           11.3183                    259\n10                13.772222     0.72           12.5258                    279\n   Visibility..km. Loud.Cover Pressure..millibars.\n1          15.8263          0              1015.13\n2          15.8263          0              1015.63\n3          14.9569          0              1015.94\n4          15.8263          0              1016.41\n5          15.8263          0              1016.51\n6          14.9569          0              1016.66\n7           9.9820          0              1016.72\n8           9.9820          0              1016.84\n9           9.9820          0              1017.37\n10          9.9820          0              1017.22\n                       Daily.Summary\n1  Partly cloudy throughout the day.\n2  Partly cloudy throughout the day.\n3  Partly cloudy throughout the day.\n4  Partly cloudy throughout the day.\n5  Partly cloudy throughout the day.\n6  Partly cloudy throughout the day.\n7  Partly cloudy throughout the day.\n8  Partly cloudy throughout the day.\n9  Partly cloudy throughout the day.\n10 Partly cloudy throughout the day.\n\n\n\n\n2.3 Structure initiale\n\n\n=== DIMENSIONS INITIALES ===\n\n\nNombre d'observations: 96453 \n\n\nNombre de variables: 12 \n\n\n=== STRUCTURE DES DONNÉES ===\n\n\n'data.frame':   96453 obs. of  12 variables:\n $ Formatted.Date          : chr  \"2006-04-01 00:00:00.000 +0200\" \"2006-04-01 01:00:00.000 +0200\" \"2006-04-01 02:00:00.000 +0200\" \"2006-04-01 03:00:00.000 +0200\" ...\n $ Summary                 : chr  \"Partly Cloudy\" \"Partly Cloudy\" \"Mostly Cloudy\" \"Partly Cloudy\" ...\n $ Precip.Type             : chr  \"rain\" \"rain\" \"rain\" \"rain\" ...\n $ Temperature..C.         : num  9.47 9.36 9.38 8.29 8.76 ...\n $ Apparent.Temperature..C.: num  7.39 7.23 9.38 5.94 6.98 ...\n $ Humidity                : num  0.89 0.86 0.89 0.83 0.83 0.85 0.95 0.89 0.82 0.72 ...\n $ Wind.Speed..km.h.       : num  14.12 14.26 3.93 14.1 11.04 ...\n $ Wind.Bearing..degrees.  : num  251 259 204 269 259 258 259 260 259 279 ...\n $ Visibility..km.         : num  15.8 15.8 15 15.8 15.8 ...\n $ Loud.Cover              : num  0 0 0 0 0 0 0 0 0 0 ...\n $ Pressure..millibars.    : num  1015 1016 1016 1016 1017 ...\n $ Daily.Summary           : chr  \"Partly cloudy throughout the day.\" \"Partly cloudy throughout the day.\" \"Partly cloudy throughout the day.\" \"Partly cloudy throughout the day.\" ..."
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#exploration-et-nettoyage-des-données",
+    "href": "qmd/weather-analysis.html#exploration-et-nettoyage-des-données",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "3 Exploration et Nettoyage des Données",
+    "text": "3 Exploration et Nettoyage des Données\n\n3.1 Détection des valeurs manquantes\n\n\n                                         Variable Valeurs_manquantes\nFormatted.Date                     Formatted.Date                  0\nSummary                                   Summary                  0\nPrecip.Type                           Precip.Type                  0\nTemperature..C.                   Temperature..C.                  0\nApparent.Temperature..C. Apparent.Temperature..C.                  0\nHumidity                                 Humidity                  0\nWind.Speed..km.h.               Wind.Speed..km.h.                  0\nWind.Bearing..degrees.     Wind.Bearing..degrees.                  0\nVisibility..km.                   Visibility..km.                  0\nLoud.Cover                             Loud.Cover                  0\nPressure..millibars.         Pressure..millibars.                  0\nDaily.Summary                       Daily.Summary                  0\n                         Pourcentage\nFormatted.Date                     0\nSummary                            0\nPrecip.Type                        0\nTemperature..C.                    0\nApparent.Temperature..C.           0\nHumidity                           0\nWind.Speed..km.h.                  0\nWind.Bearing..degrees.             0\nVisibility..km.                    0\nLoud.Cover                         0\nPressure..millibars.               0\nDaily.Summary                      0\n\n\n\n✅ EXCELLENTE NOUVELLE : Aucune valeur manquante détectée !\nLe dataset est de très bonne qualité.\n\n\n\n\n3.2 Détection des duplicatas\n\n\nNombre de lignes dupliquées: 24 \n\n\nPourcentage: 0.02 %\n\n\n\n\n3.3 Nettoyage des données\n\n\n=== RÉSUMÉ DU NETTOYAGE ===\n\n\nObservations initiales: 96453 \n\n\nDuplicatas supprimés: 24 \n\n\nObservations après nettoyage: 96429 \n\n\nPerte de données: 0.02 %\n\n\n\n\n3.4 Détection des valeurs aberrantes (outliers)\n\n\n=== OUTLIERS DÉTECTÉS ===\n\n\nTempérature: 44 \n\n\nHumidité: 46 \n\n\nVitesse du vent: 3028 \n\n\nPression: 4400 \n\n\nDécision : Je garde les outliers car ce sont des valeurs météorologiques réelles (événements extrêmes)."
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-exploratoire-des-données-eda",
+    "href": "qmd/weather-analysis.html#analyse-exploratoire-des-données-eda",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "4 Analyse Exploratoire des Données (EDA)",
+    "text": "4 Analyse Exploratoire des Données (EDA)\n\n4.1 Statistiques descriptives globales\n\n\n Temperature..C.      Humidity      Wind.Speed..km.h. Pressure..millibars.\n Min.   :-21.822   Min.   :0.0000   Min.   : 0.000    Min.   :   0        \n 1st Qu.:  4.683   1st Qu.:0.6000   1st Qu.: 5.828    1st Qu.:1012        \n Median : 12.000   Median :0.7800   Median : 9.966    Median :1016        \n Mean   : 11.930   Mean   :0.7349   Mean   :10.812    Mean   :1003        \n 3rd Qu.: 18.839   3rd Qu.:0.8900   3rd Qu.:14.136    3rd Qu.:1021        \n Max.   : 39.906   Max.   :1.0000   Max.   :63.853    Max.   :1046        \n Visibility..km.\n Min.   : 0.00  \n 1st Qu.: 8.34  \n Median :10.05  \n Mean   :10.35  \n 3rd Qu.:14.81  \n Max.   :16.10  \n\n\n# A tibble: 20 × 2\n   Statistique                       Valeur\n   &lt;chr&gt;                              &lt;dbl&gt;\n 1 Temperature..C._Moyenne           11.9  \n 2 Temperature..C._Mediane           12    \n 3 Temperature..C._Ecart_type         9.55 \n 4 Temperature..C._Min              -21.8  \n 5 Temperature..C._Max               39.9  \n 6 Humidity_Moyenne                   0.735\n 7 Humidity_Mediane                   0.78 \n 8 Humidity_Ecart_type                0.195\n 9 Humidity_Min                       0    \n10 Humidity_Max                       1    \n11 Wind.Speed..km.h._Moyenne         10.8  \n12 Wind.Speed..km.h._Mediane          9.97 \n13 Wind.Speed..km.h._Ecart_type       6.91 \n14 Wind.Speed..km.h._Min              0    \n15 Wind.Speed..km.h._Max             63.9  \n16 Pressure..millibars._Moyenne    1003.   \n17 Pressure..millibars._Mediane    1016.   \n18 Pressure..millibars._Ecart_type  117.   \n19 Pressure..millibars._Min           0    \n20 Pressure..millibars._Max        1046.   \n\n\n\n\n4.2 Distribution des variables principales\n\n\n\n\n\n\n\n\n\n\n\n4.3 Boxplots pour identifier les outliers visuellement"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-temporelle",
+    "href": "qmd/weather-analysis.html#analyse-temporelle",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "5 Analyse Temporelle",
+    "text": "5 Analyse Temporelle\n\n5.1 Évolution de la température sur 10 ans\n\n\n\n\n\n\n\n\n\n\n\n5.2 Tendance annuelle de la température\n\n\n\n\n\n\n\n\n\n\nTendance de température par an: 0.0529 °C/an\n\n\n\n\n5.3 Distribution par saison\n\n\n\n\n\n\n\n\n\n\n\n5.4 Statistiques par saison\n\n\n# A tibble: 4 × 7\n  Season Observations Temp_min Temp_moyenne Temp_max Humidite_moyenne Vent_moyen\n  &lt;chr&gt;         &lt;int&gt;    &lt;dbl&gt;        &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;      &lt;dbl&gt;\n1 Autom…        24035    -7.24        11.8      37.2            0.764      10.2 \n2 Hiver         23832   -21.8          1.52     20.0            0.846      11.6 \n3 Print…        24277   -10.1         12.2      33.8            0.679      12.1 \n4 Été           24285     5.58        22.0      39.9            0.653       9.40\n\n\n\n\n\n\n\n\n\n\n\n5.5 Pattern journalier (température par heure)\n\n\n\n\n\n\n\n\n\nObservation : Température minimale vers 5h-6h du matin, maximale vers 14h-15h."
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-des-corrélations",
+    "href": "qmd/weather-analysis.html#analyse-des-corrélations",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "6 Analyse des Corrélations",
+    "text": "6 Analyse des Corrélations\n\n6.1 Matrice de corrélation\n\n\n\n\n\n\n\n\n\n                     Temperature..C. Humidity Wind.Speed..km.h.\nTemperature..C.                1.000   -0.632             0.009\nHumidity                      -0.632    1.000            -0.225\nWind.Speed..km.h.              0.009   -0.225             1.000\nPressure..millibars.          -0.005    0.005            -0.049\nVisibility..km.                0.393   -0.369             0.101\n                     Pressure..millibars. Visibility..km.\nTemperature..C.                    -0.005           0.393\nHumidity                            0.005          -0.369\nWind.Speed..km.h.                  -0.049           0.101\nPressure..millibars.                1.000           0.060\nVisibility..km.                     0.060           1.000\n\n\n\n\n6.2 Relation Température-Humidité\n\n\n\n\n\n\n\n\n\n\n\n6.3 Relation Température-Pression"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-du-vent",
+    "href": "qmd/weather-analysis.html#analyse-du-vent",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "7 Analyse du Vent",
+    "text": "7 Analyse du Vent\n\n7.1 Distribution de la vitesse du vent\n\n\n\n\n\n\n\n\n\nVitesse moyenne du vent: 10.81 km/h\n\n\nVitesse médiane: 9.97 km/h\n\n\nVitesse maximale: 63.85 km/h\n\n\n\n\n7.2 Vitesse du vent par saison"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-des-conditions-météorologiques",
+    "href": "qmd/weather-analysis.html#analyse-des-conditions-météorologiques",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "8 Analyse des Conditions Météorologiques",
+    "text": "8 Analyse des Conditions Météorologiques\n\n8.1 Conditions les plus fréquentes\n\n\n\n\n\n\n\n\n\n\n\n8.2 Conditions par saison"
+  },
+  {
+    "objectID": "qmd/weather-analysis.html#analyse-avancée-heatmaps",
+    "href": "qmd/weather-analysis.html#analyse-avancée-heatmaps",
+    "title": "Analyse Approfondie des Patterns Météorologiques",
+    "section": "9 Analyse Avancée : Heatmaps",
+    "text": "9 Analyse Avancée : Heatmaps\n\n9.1 Heatmap Température par Mois et Heure"
+  }
+]
