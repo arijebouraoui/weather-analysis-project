@@ -8,6 +8,8 @@ format:
     number-sections: true
     theme: cosmo
     code-fold: false
+    embed-resources: true
+    self-contained: true
 editor: visual
 ---
 
@@ -19,11 +21,11 @@ Pour ce projet d'analyse de données, j'ai choisi d'étudier les patterns mété
 
 ### Objectifs de l'analyse
 
-1. **Nettoyer et explorer** les données (valeurs manquantes, duplicatas, outliers)
-2. **Analyser les patterns temporels** (saisonniers, mensuels, horaires)
-3. **Étudier les corrélations** entre variables météorologiques
-4. **Identifier les tendances** climatiques sur 10 ans
-5. **Visualiser** les distributions et relations
+1.  **Nettoyer et explorer** les données (valeurs manquantes, duplicatas, outliers)
+2.  **Analyser les patterns temporels** (saisonniers, mensuels, horaires)
+3.  **Étudier les corrélations** entre variables météorologiques
+4.  **Identifier les tendances** climatiques sur 10 ans
+5.  **Visualiser** les distributions et relations
 
 ### Méthodologie
 
@@ -32,6 +34,7 @@ J'utilise **R** avec les packages `tidyverse`, `ggplot2`, `lubridate`, et `corrp
 ## Préparation de l'environnement
 
 ### Chargement des packages
+
 ```{r}
 #| label: setup
 #| message: false
@@ -56,6 +59,7 @@ library(scales)
 ```
 
 ### Chargement des données brutes
+
 ```{r}
 #| label: load-data
 
@@ -67,6 +71,7 @@ head(weather_raw, 10)
 ```
 
 ### Structure initiale
+
 ```{r}
 #| label: initial-structure
 
@@ -83,6 +88,7 @@ str(weather_raw)
 ## Exploration et Nettoyage des Données
 
 ### Détection des valeurs manquantes
+
 ```{r}
 #| label: missing-values
 
@@ -119,6 +125,7 @@ if (total_missing == 0) {
 ```
 
 ### Détection des duplicatas
+
 ```{r}
 #| label: duplicates
 
@@ -130,6 +137,7 @@ cat("Pourcentage:", round(n_duplicates / nrow(weather_raw) * 100, 2), "%\n")
 ```
 
 ### Nettoyage des données
+
 ```{r}
 #| label: data-cleaning
 
@@ -170,6 +178,7 @@ cat("Perte de données:", round((nrow(weather_raw) - nrow(weather_clean)) / nrow
 ```
 
 ### Détection des valeurs aberrantes (outliers)
+
 ```{r}
 #| label: outliers-detection
 
@@ -205,6 +214,7 @@ cat("Pression:", sum(weather_clean$Pressure_outlier), "\n")
 ## Analyse Exploratoire des Données (EDA)
 
 ### Statistiques descriptives globales
+
 ```{r}
 #| label: descriptive-stats
 
@@ -235,6 +245,7 @@ print(custom_stats)
 ```
 
 ### Distribution des variables principales
+
 ```{r}
 #| label: distributions
 #| fig-width: 12
@@ -257,6 +268,7 @@ ggplot(weather_long, aes(x = Valeur, fill = Variable)) +
 ```
 
 ### Boxplots pour identifier les outliers visuellement
+
 ```{r}
 #| label: boxplots
 #| fig-width: 12
@@ -276,6 +288,7 @@ ggplot(weather_long, aes(x = Variable, y = Valeur, fill = Variable)) +
 ## Analyse Temporelle
 
 ### Évolution de la température sur 10 ans
+
 ```{r}
 #| label: temp-evolution
 #| fig-width: 14
@@ -301,6 +314,7 @@ ggplot(temp_monthly, aes(x = Month, y = Temp_moyenne,
 ```
 
 ### Tendance annuelle de la température
+
 ```{r}
 #| label: yearly-trend
 #| fig-width: 10
@@ -328,6 +342,7 @@ cat("\nTendance de température par an:", round(coef(lm_temp)[2], 4), "°C/an\n"
 ```
 
 ### Distribution par saison
+
 ```{r}
 #| label: seasonal-distribution
 #| fig-width: 12
@@ -345,6 +360,7 @@ ggplot(weather_clean, aes(x = Temperature..C., fill = Season)) +
 ```
 
 ### Statistiques par saison
+
 ```{r}
 #| label: seasonal-stats
 
@@ -373,6 +389,7 @@ ggplot(stats_season, aes(x = Season)) +
 ```
 
 ### Pattern journalier (température par heure)
+
 ```{r}
 #| label: hourly-pattern
 #| fig-width: 12
@@ -404,6 +421,7 @@ ggplot(temp_hourly, aes(x = Hour, y = Temp_moyenne)) +
 ## Analyse des Corrélations
 
 ### Matrice de corrélation
+
 ```{r}
 #| label: correlation-matrix
 #| fig-width: 10
@@ -434,6 +452,7 @@ print(round(cor_matrix, 3))
 ```
 
 ### Relation Température-Humidité
+
 ```{r}
 #| label: temp-humidity
 #| fig-width: 10
@@ -453,6 +472,7 @@ ggplot(weather_clean, aes(x = Temperature..C., y = Humidity)) +
 ```
 
 ### Relation Température-Pression
+
 ```{r}
 #| label: temp-pressure
 #| fig-width: 10
@@ -474,6 +494,7 @@ ggplot(weather_clean, aes(x = Temperature..C., y = Pressure..millibars.)) +
 ## Analyse du Vent
 
 ### Distribution de la vitesse du vent
+
 ```{r}
 #| label: wind-distribution
 #| fig-width: 10
@@ -497,6 +518,7 @@ cat("Vitesse maximale:", round(max(weather_clean$Wind.Speed..km.h.), 2), "km/h\n
 ```
 
 ### Vitesse du vent par saison
+
 ```{r}
 #| label: wind-by-season
 #| fig-width: 10
@@ -516,6 +538,7 @@ ggplot(weather_clean, aes(x = Season, y = Wind.Speed..km.h., fill = Season)) +
 ## Analyse des Conditions Météorologiques
 
 ### Conditions les plus fréquentes
+
 ```{r}
 #| label: weather-conditions
 #| fig-width: 14
@@ -539,6 +562,7 @@ ggplot(top_conditions, aes(x = reorder(Summary, n), y = n)) +
 ```
 
 ### Conditions par saison
+
 ```{r}
 #| label: conditions-by-season
 #| fig-width: 14
@@ -568,6 +592,7 @@ ggplot(top_conditions_season, aes(x = reorder(Summary, n),
 ## Analyse Avancée : Heatmaps
 
 ### Heatmap Température par Mois et Heure
+
 ```{r}
 #| label: heatmap-temp
 #| fig-width: 12
@@ -592,67 +617,41 @@ ggplot(temp_heatmap, aes(x = Hour, y = Month, fill = Temp_moyenne)) +
 
 ### Principales découvertes
 
-**1. Qualité des données**
-- Dataset initial : 96,453 observations
-- Duplicatas détectés et supprimés
-- Valeurs manquantes minimales
-- Outliers conservés (événements météo extrêmes réels)
+**1. Qualité des données** - Dataset initial : 96,453 observations - Duplicatas détectés et supprimés - Valeurs manquantes minimales - Outliers conservés (événements météo extrêmes réels)
 
-**2. Patterns temporels**
-- **Saisonnalité très marquée** : température moyenne varie de ~0°C en hiver à ~22°C en été
-- **Cycle journalier clair** : minimum à 5h-6h du matin, maximum à 14h-15h
-- **Tendance sur 10 ans** : légère augmentation observée
+**2. Patterns temporels** - **Saisonnalité très marquée** : température moyenne varie de \~0°C en hiver à \~22°C en été - **Cycle journalier clair** : minimum à 5h-6h du matin, maximum à 14h-15h - **Tendance sur 10 ans** : légère augmentation observée
 
-**3. Corrélations importantes**
-- **Température-Humidité** : corrélation négative forte (r ≈ -0.65)
-- **Température-Pression** : corrélation positive modérée (r ≈ 0.40)
-- Le vent est relativement indépendant des autres variables
+**3. Corrélations importantes** - **Température-Humidité** : corrélation négative forte (r ≈ -0.65) - **Température-Pression** : corrélation positive modérée (r ≈ 0.40) - Le vent est relativement indépendant des autres variables
 
-**4. Conditions météorologiques**
-- Conditions "Partly Cloudy" (partiellement nuageux) dominent
-- Forte variation saisonnière des conditions
+**4. Conditions météorologiques** - Conditions "Partly Cloudy" (partiellement nuageux) dominent - Forte variation saisonnière des conditions
 
 ### Limites de l'étude
 
-- Données d'une **seule ville** (Szeged) - pas généralisable
-- Période de **10 ans** : courte pour détecter le changement climatique à long terme
-- Pas d'analyse des **événements extrêmes** en profondeur
-- Pas de comparaison avec d'autres régions
+-   Données d'une **seule ville** (Szeged) - pas généralisable
+-   Période de **10 ans** : courte pour détecter le changement climatique à long terme
+-   Pas d'analyse des **événements extrêmes** en profondeur
+-   Pas de comparaison avec d'autres régions
 
 ### Perspectives d'amélioration
 
-- Analyser les **vagues de chaleur** et **tempêtes** spécifiquement
-- Comparer avec d'autres villes européennes
-- Créer un **modèle prédictif** de température
-- Analyser l'impact du changement climatique sur une période plus longue
+-   Analyser les **vagues de chaleur** et **tempêtes** spécifiquement
+-   Comparer avec d'autres villes européennes
+-   Créer un **modèle prédictif** de température
+-   Analyser l'impact du changement climatique sur une période plus longue
 
 ### Ce que j'ai appris
 
-**Compétences techniques :**
-- Nettoyage de données (valeurs manquantes, duplicatas, outliers)
-- Analyse exploratoire approfondie (EDA)
-- Visualisations avancées avec ggplot2
-- Manipulation de séries temporelles avec lubridate
-- Utilisation de Quarto pour rapports reproductibles
+**Compétences techniques :** - Nettoyage de données (valeurs manquantes, duplicatas, outliers) - Analyse exploratoire approfondie (EDA) - Visualisations avancées avec ggplot2 - Manipulation de séries temporelles avec lubridate - Utilisation de Quarto pour rapports reproductibles
 
-**Compétences analytiques :**
-- Détection de patterns temporels
-- Analyse de corrélations
-- Interprétation de résultats statistiques
-- Présentation de résultats de manière claire et professionnelle
+**Compétences analytiques :** - Détection de patterns temporels - Analyse de corrélations - Interprétation de résultats statistiques - Présentation de résultats de manière claire et professionnelle
 
 ## Informations techniques
 
-**Outils utilisés :**
-- **Langage** : R (version 4.5)
-- **IDE** : RStudio
-- **Publication** : Quarto
-- **Packages** : tidyverse, ggplot2, lubridate, corrplot, scales
+**Outils utilisés :** - **Langage** : R (version 4.5) - **IDE** : RStudio - **Publication** : Quarto - **Packages** : tidyverse, ggplot2, lubridate, corrplot, scales
 
-**Source des données :**  
-Weather History Dataset, Szeged (Hungary), 2006-2016  
+**Source des données :**\
+Weather History Dataset, Szeged (Hungary), 2006-2016\
 Téléchargé depuis Kaggle
 
-**Projet réalisé par :** Arije Bouraoui  
+**Projet réalisé par :** Arije Bouraoui\
 **Date :** Décembre 2025
-
