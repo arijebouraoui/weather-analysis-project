@@ -1,0 +1,658 @@
+---
+title: "Analyse Approfondie des Patterns Météorologiques"
+author: "Arije Bouraoui"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    code-fold: false
+editor: visual
+---
+
+## Introduction
+
+### Contexte du projet
+
+Pour ce projet d'analyse de données, j'ai choisi d'étudier les patterns météorologiques à Szeged, Hongrie, sur une période de 10 ans (2006-2016). Le dataset contient plus de 96,000 observations horaires de différentes variables météorologiques.
+
+### Objectifs de l'analyse
+
+1. **Nettoyer et explorer** les données (valeurs manquantes, duplicatas, outliers)
+2. **Analyser les patterns temporels** (saisonniers, mensuels, horaires)
+3. **Étudier les corrélations** entre variables météorologiques
+4. **Identifier les tendances** climatiques sur 10 ans
+5. **Visualiser** les distributions et relations
+
+### Méthodologie
+
+J'utilise **R** avec les packages `tidyverse`, `ggplot2`, `lubridate`, et `corrplot` pour l'analyse. Le projet est réalisé avec **Quarto**, permettant de combiner code, texte et visualisations dans un document reproductible.
+
+## Préparation de l'environnement
+
+### Chargement des packages
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+# Configuration CRAN
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+
+# Installation des packages
+if (!require("tidyverse")) install.packages("tidyverse")
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("lubridate")) install.packages("lubridate")
+if (!require("corrplot")) install.packages("corrplot")
+if (!require("scales")) install.packages("scales")
+
+# Chargement
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(corrplot)
+library(scales)
+```
+
+### Chargement des données brutes
+```{r}
+#| label: load-data
+
+# Lire le fichier CSV
+weather_raw <- read.csv("data/weather.csv")
+
+# Aperçu des données
+head(weather_raw, 10)
+```
+
+### Structure initiale
+```{r}
+#| label: initial-structure
+
+# Dimensions
+cat("=== DIMENSIONS INITIALES ===\n")
+cat("Nombre d'observations:", nrow(weather_raw), "\n")
+cat("Nombre de variables:", ncol(weather_raw), "\n\n")
+
+# Structure
+cat("=== STRUCTURE DES DONNÉES ===\n")
+str(weather_raw)
+```
+
+## Exploration et Nettoyage des Données
+
+### Détection des valeurs manquantes
+```{r}
+#| label: missing-values
+
+# Compter les valeurs manquantes
+missing_summary <- data.frame(
+  Variable = names(weather_raw),
+  Valeurs_manquantes = colSums(is.na(weather_raw)),
+  Pourcentage = round(colSums(is.na(weather_raw)) / nrow(weather_raw) * 100, 2)
+)
+
+# Trier par nombre décroissant
+missing_summary <- missing_summary %>%
+  arrange(desc(Valeurs_manquantes))
+
+print(missing_summary)
+
+# Message de conclusion
+total_missing <- sum(missing_summary$Valeurs_manquantes)
+
+if (total_missing == 0) {
+  cat("\n✅ EXCELLENTE NOUVELLE : Aucune valeur manquante détectée !\n")
+  cat("Le dataset est de très bonne qualité.\n")
+} else {
+  # Visualiser seulement s'il y a des valeurs manquantes
+  ggplot(missing_summary, aes(x = reorder(Variable, Valeurs_manquantes), 
+                               y = Valeurs_manquantes)) +
+    geom_col(fill = "coral") +
+    coord_flip() +
+    labs(title = "Valeurs manquantes par variable",
+         x = "Variable",
+         y = "Nombre de valeurs manquantes") +
+    theme_minimal()
+}
+```
+
+### Détection des duplicatas
+```{r}
+#| label: duplicates
+
+# Compter les duplicatas
+n_duplicates <- sum(duplicated(weather_raw))
+
+cat("Nombre de lignes dupliquées:", n_duplicates, "\n")
+cat("Pourcentage:", round(n_duplicates / nrow(weather_raw) * 100, 2), "%\n")
+```
+
+### Nettoyage des données
+```{r}
+#| label: data-cleaning
+
+# Supprimer les duplicatas
+weather_clean <- weather_raw %>%
+  distinct()
+
+# Supprimer les lignes avec des NA dans les colonnes critiques
+weather_clean <- weather_clean %>%
+  filter(!is.na(Temperature..C.),
+         !is.na(Humidity),
+         !is.na(Pressure..millibars.))
+
+# Convertir la date et créer des variables temporelles
+weather_clean <- weather_clean %>%
+  mutate(
+    Date = as.POSIXct(Formatted.Date, format = "%Y-%m-%d %H:%M:%S", tz = "UTC"),
+    Year = year(Date),
+    Month = month(Date, label = TRUE, abbr = FALSE),
+    Month_num = month(Date),
+    Day = day(Date),
+    Hour = hour(Date),
+    Weekday = wday(Date, label = TRUE, abbr = FALSE),
+    Season = case_when(
+      Month_num %in% c(12, 1, 2) ~ "Hiver",
+      Month_num %in% c(3, 4, 5) ~ "Printemps",
+      Month_num %in% c(6, 7, 8) ~ "Été",
+      Month_num %in% c(9, 10, 11) ~ "Automne"
+    )
+  )
+
+# Résumé du nettoyage
+cat("=== RÉSUMÉ DU NETTOYAGE ===\n")
+cat("Observations initiales:", nrow(weather_raw), "\n")
+cat("Duplicatas supprimés:", n_duplicates, "\n")
+cat("Observations après nettoyage:", nrow(weather_clean), "\n")
+cat("Perte de données:", round((nrow(weather_raw) - nrow(weather_clean)) / nrow(weather_raw) * 100, 2), "%\n")
+```
+
+### Détection des valeurs aberrantes (outliers)
+```{r}
+#| label: outliers-detection
+
+# Fonction pour détecter les outliers (méthode IQR)
+detect_outliers <- function(x) {
+  Q1 <- quantile(x, 0.25, na.rm = TRUE)
+  Q3 <- quantile(x, 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  lower <- Q1 - 1.5 * IQR
+  upper <- Q3 + 1.5 * IQR
+  return(x < lower | x > upper)
+}
+
+# Détecter les outliers pour les variables principales
+weather_clean <- weather_clean %>%
+  mutate(
+    Temp_outlier = detect_outliers(Temperature..C.),
+    Humidity_outlier = detect_outliers(Humidity),
+    Wind_outlier = detect_outliers(Wind.Speed..km.h.),
+    Pressure_outlier = detect_outliers(Pressure..millibars.)
+  )
+
+# Résumé des outliers
+cat("=== OUTLIERS DÉTECTÉS ===\n")
+cat("Température:", sum(weather_clean$Temp_outlier), "\n")
+cat("Humidité:", sum(weather_clean$Humidity_outlier), "\n")
+cat("Vitesse du vent:", sum(weather_clean$Wind_outlier), "\n")
+cat("Pression:", sum(weather_clean$Pressure_outlier), "\n")
+```
+
+**Décision :** Je garde les outliers car ce sont des valeurs météorologiques réelles (événements extrêmes).
+
+## Analyse Exploratoire des Données (EDA)
+
+### Statistiques descriptives globales
+```{r}
+#| label: descriptive-stats
+
+# Statistiques pour les variables numériques
+summary_stats <- weather_clean %>%
+  select(Temperature..C., Humidity, Wind.Speed..km.h., 
+         Pressure..millibars., Visibility..km.) %>%
+  summary()
+
+print(summary_stats)
+
+# Statistiques personnalisées
+custom_stats <- weather_clean %>%
+  summarise(
+    across(c(Temperature..C., Humidity, Wind.Speed..km.h., Pressure..millibars.),
+           list(
+             Moyenne = ~mean(.x, na.rm = TRUE),
+             Mediane = ~median(.x, na.rm = TRUE),
+             Ecart_type = ~sd(.x, na.rm = TRUE),
+             Min = ~min(.x, na.rm = TRUE),
+             Max = ~max(.x, na.rm = TRUE)
+           ),
+           .names = "{.col}_{.fn}")
+  ) %>%
+  pivot_longer(everything(), names_to = "Statistique", values_to = "Valeur")
+
+print(custom_stats)
+```
+
+### Distribution des variables principales
+```{r}
+#| label: distributions
+#| fig-width: 12
+#| fig-height: 8
+
+# Créer un dataframe long pour faceting
+weather_long <- weather_clean %>%
+  select(Temperature..C., Humidity, Wind.Speed..km.h., Pressure..millibars.) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Valeur")
+
+# Histogrammes
+ggplot(weather_long, aes(x = Valeur, fill = Variable)) +
+  geom_histogram(bins = 50, color = "black", alpha = 0.7) +
+  facet_wrap(~Variable, scales = "free", ncol = 2) +
+  labs(title = "Distribution des variables météorologiques",
+       x = "Valeur",
+       y = "Fréquence") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+### Boxplots pour identifier les outliers visuellement
+```{r}
+#| label: boxplots
+#| fig-width: 12
+#| fig-height: 6
+
+ggplot(weather_long, aes(x = Variable, y = Valeur, fill = Variable)) +
+  geom_boxplot(outlier.color = "red", outlier.alpha = 0.3) +
+  facet_wrap(~Variable, scales = "free", ncol = 4) +
+  labs(title = "Boxplots - Identification des valeurs aberrantes",
+       x = "",
+       y = "Valeur") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank())
+```
+
+## Analyse Temporelle
+
+### Évolution de la température sur 10 ans
+```{r}
+#| label: temp-evolution
+#| fig-width: 14
+#| fig-height: 6
+
+# Température moyenne par mois
+temp_monthly <- weather_clean %>%
+  group_by(Year, Month) %>%
+  summarise(Temp_moyenne = mean(Temperature..C., na.rm = TRUE),
+            .groups = "drop")
+
+ggplot(temp_monthly, aes(x = Month, y = Temp_moyenne, 
+                         group = Year, color = as.factor(Year))) +
+  geom_line(alpha = 0.7, size = 1) +
+  geom_point(size = 1.5) +
+  labs(title = "Évolution de la température moyenne par mois (2006-2016)",
+       subtitle = "Chaque ligne représente une année",
+       x = "Mois",
+       y = "Température (°C)",
+       color = "Année") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Tendance annuelle de la température
+```{r}
+#| label: yearly-trend
+#| fig-width: 10
+#| fig-height: 6
+
+# Température moyenne par année
+temp_yearly <- weather_clean %>%
+  group_by(Year) %>%
+  summarise(Temp_moyenne = mean(Temperature..C., na.rm = TRUE))
+
+ggplot(temp_yearly, aes(x = Year, y = Temp_moyenne)) +
+  geom_line(color = "red", size = 1.5) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "blue", linetype = "dashed") +
+  labs(title = "Température moyenne annuelle (2006-2016)",
+       subtitle = "Ligne bleue = tendance linéaire",
+       x = "Année",
+       y = "Température moyenne (°C)") +
+  scale_x_continuous(breaks = 2006:2016) +
+  theme_minimal()
+
+# Calculer la tendance
+lm_temp <- lm(Temp_moyenne ~ Year, data = temp_yearly)
+cat("\nTendance de température par an:", round(coef(lm_temp)[2], 4), "°C/an\n")
+```
+
+### Distribution par saison
+```{r}
+#| label: seasonal-distribution
+#| fig-width: 12
+#| fig-height: 6
+
+ggplot(weather_clean, aes(x = Temperature..C., fill = Season)) +
+  geom_density(alpha = 0.6) +
+  labs(title = "Distribution des températures par saison",
+       x = "Température (°C)",
+       y = "Densité",
+       fill = "Saison") +
+  scale_fill_manual(values = c("Hiver" = "#3498db", "Printemps" = "#2ecc71", 
+                                "Été" = "#e74c3c", "Automne" = "#f39c12")) +
+  theme_minimal()
+```
+
+### Statistiques par saison
+```{r}
+#| label: seasonal-stats
+
+stats_season <- weather_clean %>%
+  group_by(Season) %>%
+  summarise(
+    Observations = n(),
+    Temp_min = min(Temperature..C.),
+    Temp_moyenne = mean(Temperature..C.),
+    Temp_max = max(Temperature..C.),
+    Humidite_moyenne = mean(Humidity),
+    Vent_moyen = mean(Wind.Speed..km.h.)
+  )
+
+print(stats_season)
+
+# Visualisation
+ggplot(stats_season, aes(x = Season)) +
+  geom_point(aes(y = Temp_moyenne, color = "Moyenne"), size = 4) +
+  geom_errorbar(aes(ymin = Temp_min, ymax = Temp_max), width = 0.2) +
+  labs(title = "Températures par saison (min, moyenne, max)",
+       x = "Saison",
+       y = "Température (°C)",
+       color = "") +
+  theme_minimal()
+```
+
+### Pattern journalier (température par heure)
+```{r}
+#| label: hourly-pattern
+#| fig-width: 12
+#| fig-height: 6
+
+temp_hourly <- weather_clean %>%
+  group_by(Hour) %>%
+  summarise(
+    Temp_moyenne = mean(Temperature..C.),
+    Temp_sd = sd(Temperature..C.)
+  )
+
+ggplot(temp_hourly, aes(x = Hour, y = Temp_moyenne)) +
+  geom_ribbon(aes(ymin = Temp_moyenne - Temp_sd, 
+                  ymax = Temp_moyenne + Temp_sd),
+              fill = "lightblue", alpha = 0.5) +
+  geom_line(color = "red", size = 1.5) +
+  geom_point(size = 2) +
+  labs(title = "Température moyenne par heure de la journée",
+       subtitle = "Zone bleue = écart-type",
+       x = "Heure",
+       y = "Température (°C)") +
+  scale_x_continuous(breaks = 0:23) +
+  theme_minimal()
+```
+
+**Observation :** Température minimale vers 5h-6h du matin, maximale vers 14h-15h.
+
+## Analyse des Corrélations
+
+### Matrice de corrélation
+```{r}
+#| label: correlation-matrix
+#| fig-width: 10
+#| fig-height: 8
+
+# Sélectionner les variables numériques
+vars_numeric <- weather_clean %>%
+  select(Temperature..C., Humidity, Wind.Speed..km.h., 
+         Pressure..millibars., Visibility..km.)
+
+# Calculer la matrice de corrélation
+cor_matrix <- cor(vars_numeric, use = "complete.obs")
+
+# Visualiser
+corrplot(cor_matrix, 
+         method = "color",
+         type = "upper",
+         addCoef.col = "black",
+         number.cex = 0.8,
+         tl.col = "black",
+         tl.srt = 45,
+         title = "Matrice de corrélation des variables météorologiques",
+         mar = c(0, 0, 2, 0),
+         col = colorRampPalette(c("#3498db", "white", "#e74c3c"))(200))
+
+# Afficher les valeurs
+print(round(cor_matrix, 3))
+```
+
+### Relation Température-Humidité
+```{r}
+#| label: temp-humidity
+#| fig-width: 10
+#| fig-height: 6
+
+ggplot(weather_clean, aes(x = Temperature..C., y = Humidity)) +
+  geom_hex(bins = 60) +
+  geom_smooth(method = "lm", color = "red", size = 1.5, se = TRUE) +
+  labs(title = "Relation entre Température et Humidité",
+       subtitle = paste("Corrélation:", 
+                       round(cor(weather_clean$Temperature..C., 
+                                weather_clean$Humidity), 3)),
+       x = "Température (°C)",
+       y = "Humidité (%)") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Fréquence") +
+  theme_minimal()
+```
+
+### Relation Température-Pression
+```{r}
+#| label: temp-pressure
+#| fig-width: 10
+#| fig-height: 6
+
+ggplot(weather_clean, aes(x = Temperature..C., y = Pressure..millibars.)) +
+  geom_hex(bins = 60) +
+  geom_smooth(method = "lm", color = "red", size = 1.5, se = TRUE) +
+  labs(title = "Relation entre Température et Pression atmosphérique",
+       subtitle = paste("Corrélation:", 
+                       round(cor(weather_clean$Temperature..C., 
+                                weather_clean$Pressure..millibars.), 3)),
+       x = "Température (°C)",
+       y = "Pression (millibars)") +
+  scale_fill_gradient(low = "lightgreen", high = "darkgreen", name = "Fréquence") +
+  theme_minimal()
+```
+
+## Analyse du Vent
+
+### Distribution de la vitesse du vent
+```{r}
+#| label: wind-distribution
+#| fig-width: 10
+#| fig-height: 6
+
+ggplot(weather_clean, aes(x = Wind.Speed..km.h.)) +
+  geom_histogram(bins = 60, fill = "skyblue", color = "black", alpha = 0.7) +
+  geom_vline(aes(xintercept = mean(Wind.Speed..km.h.)),
+             color = "red", linetype = "dashed", size = 1.5) +
+  geom_vline(aes(xintercept = median(Wind.Speed..km.h.)),
+             color = "blue", linetype = "dashed", size = 1.5) +
+  labs(title = "Distribution de la vitesse du vent",
+       subtitle = "Ligne rouge = moyenne, Ligne bleue = médiane",
+       x = "Vitesse du vent (km/h)",
+       y = "Fréquence") +
+  theme_minimal()
+
+cat("Vitesse moyenne du vent:", round(mean(weather_clean$Wind.Speed..km.h.), 2), "km/h\n")
+cat("Vitesse médiane:", round(median(weather_clean$Wind.Speed..km.h.), 2), "km/h\n")
+cat("Vitesse maximale:", round(max(weather_clean$Wind.Speed..km.h.), 2), "km/h\n")
+```
+
+### Vitesse du vent par saison
+```{r}
+#| label: wind-by-season
+#| fig-width: 10
+#| fig-height: 6
+
+ggplot(weather_clean, aes(x = Season, y = Wind.Speed..km.h., fill = Season)) +
+  geom_boxplot(outlier.alpha = 0.2) +
+  labs(title = "Distribution de la vitesse du vent par saison",
+       x = "Saison",
+       y = "Vitesse du vent (km/h)") +
+  scale_fill_manual(values = c("Hiver" = "#3498db", "Printemps" = "#2ecc71", 
+                                "Été" = "#e74c3c", "Automne" = "#f39c12")) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+## Analyse des Conditions Météorologiques
+
+### Conditions les plus fréquentes
+```{r}
+#| label: weather-conditions
+#| fig-width: 14
+#| fig-height: 7
+
+# Top 15 conditions
+top_conditions <- weather_clean %>%
+  count(Summary, sort = TRUE) %>%
+  head(15) %>%
+  mutate(Pourcentage = n / sum(n) * 100)
+
+ggplot(top_conditions, aes(x = reorder(Summary, n), y = n)) +
+  geom_col(fill = "coral", alpha = 0.8) +
+  geom_text(aes(label = paste0(round(Pourcentage, 1), "%")), 
+            hjust = -0.2, size = 3.5) +
+  coord_flip() +
+  labs(title = "Top 15 des conditions météorologiques les plus fréquentes",
+       x = "Condition",
+       y = "Nombre d'observations") +
+  theme_minimal()
+```
+
+### Conditions par saison
+```{r}
+#| label: conditions-by-season
+#| fig-width: 14
+#| fig-height: 10
+
+# Top 7 conditions par saison
+top_conditions_season <- weather_clean %>%
+  group_by(Season, Summary) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(Season) %>%
+  slice_max(n, n = 7)
+
+ggplot(top_conditions_season, aes(x = reorder(Summary, n), 
+                                   y = n, fill = Season)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~Season, scales = "free_y", ncol = 2) +
+  labs(title = "Top 7 conditions météo par saison",
+       x = "Condition",
+       y = "Fréquence") +
+  scale_fill_manual(values = c("Hiver" = "#3498db", "Printemps" = "#2ecc71", 
+                                "Été" = "#e74c3c", "Automne" = "#f39c12")) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+## Analyse Avancée : Heatmaps
+
+### Heatmap Température par Mois et Heure
+```{r}
+#| label: heatmap-temp
+#| fig-width: 12
+#| fig-height: 8
+
+temp_heatmap <- weather_clean %>%
+  group_by(Month, Hour) %>%
+  summarise(Temp_moyenne = mean(Temperature..C.), .groups = "drop")
+
+ggplot(temp_heatmap, aes(x = Hour, y = Month, fill = Temp_moyenne)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red",
+                       midpoint = 12, name = "Température\n(°C)") +
+  labs(title = "Heatmap : Température moyenne par mois et heure",
+       x = "Heure de la journée",
+       y = "Mois") +
+  scale_x_continuous(breaks = 0:23) +
+  theme_minimal()
+```
+
+## Conclusion
+
+### Principales découvertes
+
+**1. Qualité des données**
+- Dataset initial : 96,453 observations
+- Duplicatas détectés et supprimés
+- Valeurs manquantes minimales
+- Outliers conservés (événements météo extrêmes réels)
+
+**2. Patterns temporels**
+- **Saisonnalité très marquée** : température moyenne varie de ~0°C en hiver à ~22°C en été
+- **Cycle journalier clair** : minimum à 5h-6h du matin, maximum à 14h-15h
+- **Tendance sur 10 ans** : légère augmentation observée
+
+**3. Corrélations importantes**
+- **Température-Humidité** : corrélation négative forte (r ≈ -0.65)
+- **Température-Pression** : corrélation positive modérée (r ≈ 0.40)
+- Le vent est relativement indépendant des autres variables
+
+**4. Conditions météorologiques**
+- Conditions "Partly Cloudy" (partiellement nuageux) dominent
+- Forte variation saisonnière des conditions
+
+### Limites de l'étude
+
+- Données d'une **seule ville** (Szeged) - pas généralisable
+- Période de **10 ans** : courte pour détecter le changement climatique à long terme
+- Pas d'analyse des **événements extrêmes** en profondeur
+- Pas de comparaison avec d'autres régions
+
+### Perspectives d'amélioration
+
+- Analyser les **vagues de chaleur** et **tempêtes** spécifiquement
+- Comparer avec d'autres villes européennes
+- Créer un **modèle prédictif** de température
+- Analyser l'impact du changement climatique sur une période plus longue
+
+### Ce que j'ai appris
+
+**Compétences techniques :**
+- Nettoyage de données (valeurs manquantes, duplicatas, outliers)
+- Analyse exploratoire approfondie (EDA)
+- Visualisations avancées avec ggplot2
+- Manipulation de séries temporelles avec lubridate
+- Utilisation de Quarto pour rapports reproductibles
+
+**Compétences analytiques :**
+- Détection de patterns temporels
+- Analyse de corrélations
+- Interprétation de résultats statistiques
+- Présentation de résultats de manière claire et professionnelle
+
+## Informations techniques
+
+**Outils utilisés :**
+- **Langage** : R (version 4.5)
+- **IDE** : RStudio
+- **Publication** : Quarto
+- **Packages** : tidyverse, ggplot2, lubridate, corrplot, scales
+
+**Source des données :**  
+Weather History Dataset, Szeged (Hungary), 2006-2016  
+Téléchargé depuis Kaggle
+
+**Projet réalisé par :** Arije Bouraoui  
+**Date :** Décembre 2025
+
