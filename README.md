@@ -1,122 +1,92 @@
-## \# 🌤️ Analyse des Patterns Météorologiques - Szeged (2006-2016)
+Analyse des patterns météorologiques – Szeged (2006–2016)
+📌 Présentation du projet
 
-## 
+Ce projet consiste en une analyse exploratoire approfondie de données météorologiques horaires collectées à Szeged (Hongrie) sur une période de 10 ans (2006–2016), représentant 96 453 observations.
 
-## \## À propos du projet
+L’objectif principal est de comprendre les comportements climatiques, les variations temporelles et les relations entre les principales variables météorologiques, à travers une approche structurée et reproductible en R.
 
-## 
 
-## Analyse approfondie de \*\*96,453 observations\*\* météorologiques horaires collectées à Szeged, Hongrie, sur une période de 10 ans (2006-2016).
+🎯 Objectifs de l’analyse
 
-## 
+Nettoyer et préparer les données (valeurs manquantes, doublons, valeurs aberrantes)
 
-## \## 🎯 Objectifs
+Étudier l’évolution de la météo selon différentes échelles temporelles (heure, mois, saison, année)
 
-## 
+Mettre en évidence les corrélations entre les variables climatiques
 
-## \- Nettoyer et explorer les données (valeurs manquantes, duplicatas, outliers)
+Identifier d’éventuelles tendances climatiques sur la décennie étudiée
 
-## \- Analyser les patterns temporels (saisonniers, mensuels, horaires)
+Produire des visualisations claires et interprétables
 
-## \- Étudier les corrélations entre variables météorologiques
+🔍 Démarche analytique
 
-## \- Identifier les tendances climatiques
+L’analyse a été menée étape par étape :
 
-## 
+Vérification de la structure et de la qualité du dataset
 
-## \## 🔬 Analyses réalisées
+Suppression de 24 observations dupliquées
 
-## 
+Détection des valeurs aberrantes à l’aide de la méthode IQR
 
-## ✅ Détection et suppression de 24 duplicatas  
+Analyse descriptive des variables principales
 
-## ✅ Détection des outliers (méthode IQR)  
+Étude des variations temporelles (journalières, mensuelles et saisonnières)
 
-## ✅ 16 visualisations professionnelles  
+Construction d’une matrice de corrélation
 
-## ✅ Analyse temporelle sur 10 ans  
+Création de 16 visualisations pour appuyer les résultats (courbes, heatmaps, boxplots)
 
-## ✅ Matrice de corrélations  
+📊 Principales observations
 
-## ✅ Heatmaps température × mois × heure  
+Saisonnalité marquée :
+La température moyenne varie d’environ 0 °C en hiver à 22 °C en été.
 
-## ✅ Analyse saisonnière complète  
+Relation température–humidité :
+Une corrélation négative forte est observée (r ≈ −0,65), indiquant que l’humidité diminue lorsque la température augmente.
 
-## 
+Cycle journalier clair :
+Les températures minimales apparaissent généralement entre 5h et 6h, tandis que les maximales se situent entre 14h et 15h.
 
-## \##  Principales découvertes
+Évolution sur le long terme :
+Une légère tendance à la hausse des températures est perceptible sur la période étudiée.
 
-## 
+🛠️ Outils et technologies utilisés
 
-## 1\. \*\*Saisonnalité marquée\*\* : température varie de ~0°C (hiver) à ~22°C (été)
+Langage : R (v4.5)
 
-## 2\. \*\*Corrélation négative forte\*\* entre température et humidité (r ≈ -0.65)
+Environnement : RStudio
 
-## 3\. \*\*Cycle journalier\*\* : minimum à 5h-6h, maximum à 14h-15h
+Rapport reproductible : Quarto
 
-## 4\. \*\*Tendance climatique\*\* : légère augmentation observée sur la décennie
+Packages principaux :
 
-## 
+tidyverse
 
-## \## 🛠️ Technologies
+ggplot2
 
-## 
+lubridate
 
-## \- \*\*R\*\* (version 4.5)
+corrplot
 
-## \- \*\*RStudio\*\*
+▶️ Exécution du projet
+# Cloner le dépôt
+git clone https://github.com/arijebouraoui/weather-analysis-project.git
+cd weather-analysis-project
 
-## \- \*\*Quarto\*\*
 
-## \- \*\*Packages\*\* : tidyverse, ggplot2, lubridate, corrplot
+Ouvrir le projet dans RStudio
 
-## 
+Ouvrir le fichier qmd/weather-analysis.qmd
 
-## \## 📖 Utilisation
+Cliquer sur Render pour générer le rapport
 
-## ```bash
+📁 Source des données
 
-## \# Cloner le projet
+Weather History Dataset – Szeged, Hungary (2006–2016)
+Disponible sur Kaggle
 
-## git clone https://github.com/arijebouraoui/weather-analysis-project.git
+👤 Auteur
 
-## cd weather-analysis-project
-
-## 
-
-## \# Ouvrir dans RStudio
-
-## \# Ouvrir qmd/weather-analysis.qmd
-
-## \# Cliquer sur "Render"
-
-## ```
-
-## 
-
-## \## 📄 Source des données
-
-## 
-
-## Weather History Dataset - Szeged, Hungary (2006-2016)  
-
-## Source : Kaggle
-
-## 
-
-## \## 👤 Auteur
-
-## 
-
-## \*\*Arije Bouraoui\*\*  
-
-## Projet d'analyse de données - Décembre 2025
-
-## 
-
-## ---
-
-## 
-
-## ⭐ \*\*Projet réalisé avec Quarto pour une analyse reproductible\*\*
-
+Arije Bouraoui
+Projet d’analyse de données
+Décembre 2026
